@@ -10,9 +10,7 @@
 
 namespace Yipikai\FirewallBundle\Listener;
 
-use Symfony\Component\HttpClient\Exception\RedirectionException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Yipikai\FirewallBundle\Configuration\FirewallConfiguration;
