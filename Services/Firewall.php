@@ -85,7 +85,7 @@ class Firewall
       "Accept" 					      =>	"*/*",
       "Content-Type"          =>  'application/json',
       "x-yipikai-timestamp"   =>  $dateNow->getTimestamp(),
-      "x-yipikai-client-ip"   =>  $request->getClientIp(),
+      "x-yipikai-client-ip"   =>  $request->headers->get("x-real-ip", $request->getClientIp()),
       "x-yipikai-host"        =>  $request->getHost(),
       "x-yipikai-token"       =>  $this->firewallConfiguration->get('token.public'),
       "x-yipikai-hash"        =>  self::generateToken(
