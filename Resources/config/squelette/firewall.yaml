@@ -1,0 +1,19 @@
+yipikai_firewall:
+  uri:                        ""
+  token:
+    public:                   ""
+    private:                  ""
+    salt:                     "YOUR_SALT"
+  filters:
+    environnement:
+      dev:
+        enabled:              true
+        redirect:             ""
+      prod:
+        enabled:              false
+        redirect:             ""
+      path:
+        list:                 []
+        redirect:             ""
+
+

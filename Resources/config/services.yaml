@@ -1,0 +1,22 @@
+services:
+  _defaults:
+    public:        true
+
+
+##### Firewall Listener
+
+  yipikai.firewall.listener:
+    class: Yipikai\FirewallBundle\Listener\FirewallListener
+    arguments:  ["@yipikai.firewall", "@yipikai.firewall.config"]
+    tags:
+      - { name: kernel.event_listener, event: kernel.request, method: execute, priority: 30 }
+
+##### Configuration
+  yipikai.firewall.config:
+    class: Yipikai\FirewallBundle\Configuration\FirewallConfiguration
+    arguments: [ "%yipikai_firewall%" ]
+
+
+  yipikai.firewall:
+    class:     Yipikai\FirewallBundle\Services\Firewall
+    arguments: [ "@yipikai.firewall.config" ]
