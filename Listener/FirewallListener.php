@@ -63,12 +63,15 @@ class FirewallListener
       $checkAccess = true;
       $redirect = $this->firewallConfiguration->get("filters.environnement.prod.redirect");
     }
-    elseif($paths = $this->firewallConfiguration->get("filters.path.list"))
+    elseif($this->firewallConfiguration->get("filters.path.enabled") === true && ($paths = $this->firewallConfiguration->get("filters.path.list")))
     {
-      if(in_array($event->getRequest()->getRequestUri(), $paths))
+      foreach($paths as $path)
       {
-        $checkAccess = true;
-        $redirect = $this->firewallConfiguration->get("filters.path.redirect");
+        if(strpos($event->getRequest()->getRequestUri(), $path) === 0)
+        {
+          $checkAccess = true;
+          $redirect = $this->firewallConfiguration->get("filters.path.redirect");
+        }
       }
     }
     if($checkAccess) {

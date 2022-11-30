@@ -67,6 +67,7 @@ class Configuration implements ConfigurationInterface
         ->end()
         ->arrayNode("path")
           ->children()
+            ->booleanNode("enabled")->defaultFalse()->end()
             ->arrayNode("list")->scalarPrototype()->end()->end()
             ->scalarNode("redirect")->end()
           ->end()
@@ -100,6 +101,7 @@ class Configuration implements ConfigurationInterface
           )
         ),
         "path"                 =>  array(
+          "enabled"               =>  false,
           "list"                  =>  array(),
           "redirect"              =>  ""
         )
