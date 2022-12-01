@@ -34,6 +34,7 @@ yipikai_firewall:
         enabled:              false
         redirect:             "https://yipikai.studio"
     path:
+      enabled:                true
       list:
         - /path-with-firewall
       redirect:               "https://yipikai.studio"
