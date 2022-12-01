@@ -13,6 +13,7 @@ namespace Yipikai\FirewallBundle\Listener;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Yipikai\FirewallBundle\Configuration\FirewallConfiguration;
 use Yipikai\FirewallBundle\Event\FirewallEvent;
@@ -41,12 +42,19 @@ class FirewallListener
   protected ?EventDispatcherInterface $dispatcher = null;
 
   /**
+   * @var Kernel
+   */
+  protected Kernel $kernel;
+
+  /**
+   * @param Kernel $kernel
    * @param Firewall $firewall
    * @param FirewallConfiguration $firewallConfiguration
    * @param EventDispatcherInterface|null $dispatcher
    */
-  public function __construct(Firewall $firewall, FirewallConfiguration $firewallConfiguration, ?EventDispatcherInterface $dispatcher)
+  public function __construct(Kernel $kernel, Firewall $firewall, FirewallConfiguration $firewallConfiguration, ?EventDispatcherInterface $dispatcher)
   {
+    $this->kernel = $kernel;
     $this->firewall = $firewall;
     $this->firewallConfiguration = $firewallConfiguration;
     $this->dispatcher = $dispatcher;
@@ -63,13 +71,13 @@ class FirewallListener
     $checkAccess = false;
     $redirect = null;
     $type = null;
-    if($this->firewallConfiguration->get("filters.environnement.dev.enabled") === true && $event->getRequest()->server->get("APP_ENV") === "dev")
+    if($this->firewallConfiguration->get("filters.environnement.dev.enabled") === true && $this->kernel->getEnvironment() === "dev")
     {
       $type = "env.dev";
       $checkAccess = true;
       $redirect = $this->firewallConfiguration->get("filters.environnement.dev.redirect");
     }
-    elseif($this->firewallConfiguration->get("filters.environnement.prod.enabled") === true && $event->getRequest()->server->get("APP_ENV") === "prod")
+    elseif($this->firewallConfiguration->get("filters.environnement.prod.enabled") === true && $this->kernel->getEnvironment() === "prod")
     {
       $type = "env.prod";
       $checkAccess = true;

@@ -12,7 +12,7 @@ services:
 ##### Firewall Listener
   yipikai.firewall.listener:
     class:          Yipikai\FirewallBundle\Listener\FirewallListener
-    arguments:      ["@yipikai.firewall", "@yipikai.firewall.config", "@?event_dispatcher"]
+    arguments:      ["@kernel", "@yipikai.firewall", "@yipikai.firewall.config", "@?event_dispatcher"]
     tags:
       - { name: kernel.event_listener, event: kernel.request, method: execute, priority: 30 }
 
