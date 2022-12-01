@@ -88,20 +88,16 @@ class FirewallListener
       }
     }
     $firewallEvent = new FirewallEvent();
-    if($checkAccess)
+    $firewallEvent->setRedirect($redirect);
+    $firewallEvent->setIsEnabled($checkAccess);
+    $firewallEvent->setType($type);
+    if($this->dispatcher)
     {
-      $firewallEvent->setType($type);
-      $firewallEvent->setIsEnabled(true);
-      if($this->dispatcher)
-      {
-        $this->dispatcher->dispatch($firewallEvent, FirewallEvent::EVENT_YIPIKAI_FIREWALL_ENABLED);
-      }
+      $this->dispatcher->dispatch($firewallEvent, FirewallEvent::EVENT_YIPIKAI_FIREWALL_ENABLED);
     }
-
     if($firewallEvent->getIsEnabled()) {
       $isAuthorize = $this->firewall->authorize($event->getRequest());
       $firewallEvent->setIsAuthorize($isAuthorize);
-      $firewallEvent->setRedirect($redirect);
       if($this->dispatcher)
       {
         $this->dispatcher->dispatch($firewallEvent, FirewallEvent::EVENT_YIPIKAI_FIREWALL_AUTHORIZE);
