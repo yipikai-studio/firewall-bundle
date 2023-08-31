@@ -95,13 +95,14 @@ class Firewall
         $this->firewallConfiguration->get('token.salt')
       )
     );
+    $responseObject = null;
     try {
       $httpClient = new NativeHttpClient();
       $response = $httpClient->request("GET", $this->firewallConfiguration->get('uri'), $requestParameters);
+      $responseObject = json_decode($response->getContent(false));
     }  catch (TransportExceptionInterface|\Exception $e) {
     }
-    $responseObject = json_decode($response->getContent(false));
-    if($responseObject->status === "success")
+    if($responseObject && $responseObject->status === "success")
     {
       $dateCheck = clone $dateNow;
       $dateCheck->setTimestamp($responseObject->timestamp);
