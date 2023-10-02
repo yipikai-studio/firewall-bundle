@@ -72,6 +72,13 @@ class Configuration implements ConfigurationInterface
             ->scalarNode("redirect")->end()
           ->end()
         ->end()
+        ->arrayNode("domain")
+          ->children()
+            ->booleanNode("enabled")->defaultFalse()->end()
+            ->arrayNode("list")->scalarPrototype()->end()->end()
+            ->scalarNode("redirect")->end()
+          ->end()
+        ->end()
       ->end()
     ->end();
     return $treeBuilder;

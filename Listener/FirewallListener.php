@@ -95,6 +95,19 @@ class FirewallListener
         }
       }
     }
+    elseif($this->firewallConfiguration->get("filters.domain.enabled") === true && ($domains = $this->firewallConfiguration->get("filters.domain.list")))
+    {
+      $type = "domain";
+      foreach($domains as $domain)
+      {
+        if(strpos($event->getRequest()->getHost(), $domain) === 0)
+        {
+          $checkAccess = true;
+          $redirect = $this->firewallConfiguration->get("filters.domain.redirect");
+        }
+      }
+    }
+
     $firewallEvent = new FirewallEvent();
     $firewallEvent->setRedirect($redirect);
     $firewallEvent->setIsEnabled($checkAccess);
