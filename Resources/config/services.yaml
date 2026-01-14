@@ -6,7 +6,7 @@ services:
 
 
 ##### Event Subscriber
-  ipikai\FirewallBundle\EventSubscriber\FirewallEventSubscriber:
+  Yipikai\FirewallBundle\EventSubscriber\FirewallEventSubscriber:
     tags:
       - { name: kernel.event_subscriber }
   yipikai.firewall.event_subscriber:
