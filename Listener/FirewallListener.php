@@ -10,6 +10,7 @@
 
 namespace Yipikai\FirewallBundle\Listener;
 
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -27,37 +28,17 @@ class FirewallListener
 {
 
   /**
-   * @var Firewall
-   */
-  protected Firewall $firewall;
-
-  /**
-   * @var FirewallConfiguration
-   */
-  protected FirewallConfiguration $firewallConfiguration;
-
-  /**
-   * @var EventDispatcherInterface|null
-   */
-  protected ?EventDispatcherInterface $dispatcher = null;
-
-  /**
-   * @var Kernel
-   */
-  protected Kernel $kernel;
-
-  /**
    * @param Kernel $kernel
    * @param Firewall $firewall
    * @param FirewallConfiguration $firewallConfiguration
    * @param EventDispatcherInterface|null $dispatcher
    */
-  public function __construct(Kernel $kernel, Firewall $firewall, FirewallConfiguration $firewallConfiguration, ?EventDispatcherInterface $dispatcher)
+  public function __construct(
+    #[Autowire(service: "kernel")] protected Kernel $kernel,
+    #[Autowire(service: "yipikai.firewall")] protected Firewall $firewall,
+    #[Autowire(service: "yipikai.firewall.config")] protected FirewallConfiguration $firewallConfiguration,
+    #[Autowire(service: "event_dispatcher")] protected ?EventDispatcherInterface $dispatcher)
   {
-    $this->kernel = $kernel;
-    $this->firewall = $firewall;
-    $this->firewallConfiguration = $firewallConfiguration;
-    $this->dispatcher = $dispatcher;
   }
 
   /**
@@ -66,7 +47,7 @@ class FirewallListener
    * @return void
    * @throws TransportExceptionInterface
    */
-  public function execute(RequestEvent $event)
+  public function execute(RequestEvent $event): void
   {
     $checkAccess = false;
     $redirect = null;
@@ -88,7 +69,7 @@ class FirewallListener
       $type = "path";
       foreach($paths as $path)
       {
-        if(strpos($event->getRequest()->getRequestUri(), $path) === 0)
+        if(str_starts_with($event->getRequest()->getRequestUri(), $path))
         {
           $checkAccess = true;
           $redirect = $this->firewallConfiguration->get("filters.path.redirect");
@@ -100,7 +81,7 @@ class FirewallListener
       $type = "domain";
       foreach($domains as $domain)
       {
-        if(strpos($event->getRequest()->getHost(), $domain) === 0)
+        if(str_starts_with($event->getRequest()->getHost(), $domain))
         {
           $checkAccess = true;
           $redirect = $this->firewallConfiguration->get("filters.domain.redirect");
@@ -112,17 +93,12 @@ class FirewallListener
     $firewallEvent->setRedirect($redirect);
     $firewallEvent->setIsEnabled($checkAccess);
     $firewallEvent->setType($type);
-    if($this->dispatcher)
-    {
-      $this->dispatcher->dispatch($firewallEvent, FirewallEvent::EVENT_YIPIKAI_FIREWALL_ENABLED);
-    }
+    $this->dispatcher?->dispatch($firewallEvent, FirewallEvent::EVENT_YIPIKAI_FIREWALL_ENABLED);
+
     if($firewallEvent->getIsEnabled()) {
       $isAuthorize = $this->firewall->authorize($event->getRequest());
       $firewallEvent->setIsAuthorize($isAuthorize);
-      if($this->dispatcher)
-      {
-        $this->dispatcher->dispatch($firewallEvent, FirewallEvent::EVENT_YIPIKAI_FIREWALL_AUTHORIZE);
-      }
+      $this->dispatcher?->dispatch($firewallEvent, FirewallEvent::EVENT_YIPIKAI_FIREWALL_AUTHORIZE);
       if(!$firewallEvent->getIsAuthorize())
       {
         $response = new RedirectResponse($firewallEvent->getRedirect(), 301);

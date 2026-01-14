@@ -1,27 +1,30 @@
 services:
   _defaults:
-    public:        true
+    autowire:       true
+    autoconfigure:  true
+    public:         true
 
 
 ##### Event Subscriber
-  yipikai.firewall.event_subscriber:
-    class:          Yipikai\FirewallBundle\EventSubscriber\FirewallEventSubscriber
+  ipikai\FirewallBundle\EventSubscriber\FirewallEventSubscriber:
     tags:
       - { name: kernel.event_subscriber }
+  yipikai.firewall.event_subscriber:
+    alias:          Yipikai\FirewallBundle\EventSubscriber\FirewallEventSubscriber
 
 ##### Firewall Listener
-  yipikai.firewall.listener:
-    class:          Yipikai\FirewallBundle\Listener\FirewallListener
-    arguments:      ["@kernel", "@yipikai.firewall", "@yipikai.firewall.config", "@?event_dispatcher"]
+  Yipikai\FirewallBundle\Listener\FirewallListener:
     tags:
       - { name: kernel.event_listener, event: kernel.request, method: execute, priority: 30 }
+  yipikai.firewall.listener:
+    alias:          Yipikai\FirewallBundle\Listener\FirewallListener
 
 ##### Configuration
+  Yipikai\FirewallBundle\Configuration\FirewallConfiguration: ~
   yipikai.firewall.config:
-    class:          Yipikai\FirewallBundle\Configuration\FirewallConfiguration
-    arguments:      [ "%yipikai_firewall%" ]
+    alias:          Yipikai\FirewallBundle\Configuration\FirewallConfiguration
 
 ##### Firewall
+  Yipikai\FirewallBundle\Services\Firewall: ~
   yipikai.firewall:
-    class:          Yipikai\FirewallBundle\Services\Firewall
-    arguments:      [ "@yipikai.firewall.config" ]
+    alias:          Yipikai\FirewallBundle\Services\Firewall

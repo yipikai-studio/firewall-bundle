@@ -10,6 +10,7 @@
 
 namespace Yipikai\FirewallBundle\Services;
 
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpClient\NativeHttpClient;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
@@ -23,18 +24,13 @@ class Firewall
 {
 
   /**
-   * @var FirewallConfiguration
-   */
-  protected FirewallConfiguration $firewallConfiguration;
-
-  /**
    * @param FirewallConfiguration $firewallConfiguration
    *
    * @return void
    */
-  public function __construct(FirewallConfiguration $firewallConfiguration)
+  public function __construct(
+    #[Autowire(service: "yipikai.firewall.config")] protected FirewallConfiguration $firewallConfiguration)
   {
-    $this->firewallConfiguration = $firewallConfiguration;
   }
 
   /**

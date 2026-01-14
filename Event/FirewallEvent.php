@@ -41,6 +41,9 @@ class FirewallEvent
    */
   protected ?string $redirect = null;
 
+  /**
+   * FirewallEvent constructor
+   */
   public function __construct()
   {
 
